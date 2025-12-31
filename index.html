@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CodingPhiles | Launching Soon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300..800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:"Nunito",sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.launch-container{
+  text-align:center;
+  padding:40px 20px;
+  max-width:900px;
+  width:100%;
+  position:relative;
+  z-index:2;
+}
+
+.brand h1{
+  font-family:"Jersey 10",cursive;
+  font-size:clamp(3rem,8vw,4.5rem);
+}
+.brand h1 span{color:#b388ff}
+
+.brand p{margin-top:8px;font-size:15px;color:#ddd}
+
+.code-line{
+  margin:30px auto;
+  font-family:monospace;
+  font-size:16px;
+  color:#9ef0ff;
+  white-space:nowrap;
+  overflow:hidden;
+  border-right:2px solid #9ef0ff;
+  width:0;
+  animation:typing 4s steps(40) forwards,blink .7s infinite;
+}
+@keyframes typing{to{width:100%}}
+@keyframes blink{50%{border-color:transparent}}
+
+.launch-text{margin:25px 0 10px;font-size:22px;font-weight:700}
+.location{font-size:14px;color:#ccc}
+.festival-line{margin-top:8px;font-size:14px;color:#ffd580}
+
+.countdown{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:30px;
+}
+.time-box{
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(10px);
+  border-radius:14px;
+  padding:18px 22px;
+  min-width:90px;
+  box-shadow:0 0 22px rgba(255,183,3,.35);
+}
+.time-box h2{font-size:32px}
+.time-box span{font-size:13px;color:#ddd}
+
+.rangoli{margin-top:18px;color:#ffdf91;font-size:14px;opacity:.6}
+
+footer{margin-top:40px;font-size:13px;color:#ccc}
+footer strong{color:#b388ff}
+
+
+.kites span{
+  position:absolute;
+  bottom:-50px;
+  font-size:26px;
+  animation:fly 18s linear infinite;
+  opacity:.8;
+}
+.kites span:nth-child(1){left:8%}
+.kites span:nth-child(2){left:30%;animation-delay:5s}
+.kites span:nth-child(3){left:60%;animation-delay:9s}
+.kites span:nth-child(4){left:85%;animation-delay:13s}
+
+@keyframes fly{
+  0%{transform:translateY(0)}
+  100%{transform:translateY(-120vh) rotate(18deg)}
+}
+
+#confettiCanvas,#sparkCanvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+#confettiCanvas{z-index:998}
+#sparkCanvas{z-index:999}
+
+.launch-live{
+  font-size:24px;
+  font-weight:800;
+  color:#ffd580;
+  margin-top:20px;
+  animation:pop .6s ease-in-out infinite alternate;
+}
+@keyframes pop{to{transform:scale(1.05)}}
+
+.sound-hint{
+  margin-top:12px;
+  font-size:12px;
+  color:#aaa;
+}
+/* Brand stays original */
+.brand h1 span,
+footer strong {
+  color: #b388ff;
+}
+
+/* Festival colors ONLY for effects */
+.time-box {
+  box-shadow: 0 0 22px rgba(255, 183, 3, 0.35);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="kites" aria-hidden="true">
+  <span>🪁</span><span>🪁</span><span>🪁</span><span>🪁</span>
+</div>
+
+<div class="launch-container">
+  <div class="brand">
+    <h1>Coding<span>Philes</span></h1>
+    <p>Where Philes meet Coding</p>
+  </div>
+
+  <div class="code-line">&gt; initializing CodingPhiles();</div>
+
+  <div class="launch-text">🚀 Launching on 15 January 2026</div>
+  <div class="location">📍 Sankarnathi</div>
+  <div class="festival-line">🪁 Happy Sankranthi · Learning takes flight with Code</div>
+
+  <div class="countdown">
+    <div class="time-box"><h2 id="days">00</h2><span>Days</span></div>
+    <div class="time-box"><h2 id="hours">00</h2><span>Hours</span></div>
+    <div class="time-box"><h2 id="minutes">00</h2><span>Minutes</span></div>
+    <div class="time-box"><h2 id="seconds">00</h2><span>Seconds</span></div>
+  </div>
+
+  <div class="sound-hint">🔊 Tap once to enable launch sound</div>
+  <div class="rangoli">✺ ✶ ✺ ✶ ✺</div>
+
+  <footer>
+    © <span id="year"></span> <strong>CodingPhiles</strong> · Developed by NLR Group of Company
+  </footer>
+</div>
+
+<!-- AUDIO -->
+<audio id="drumSound" preload="auto">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-tribal-drum-hit-558.mp3">
+</audio>
+<audio id="crackleSound" preload="auto">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-firework-crackle-2064.mp3">
+</audio>
+
+<canvas id="confettiCanvas"></canvas>
+<canvas id="sparkCanvas"></canvas>
+
+<script>
+const launchDate = new Date(2026, 0, 15, 10, 0, 0).getTime();
+
+
+const redirectURL="home.html";
+const ids=["days","hours","minutes","seconds"];
+
+const drum=document.getElementById("drumSound");
+const crackle=document.getElementById("crackleSound");
+let soundEnabled=false,launched=false;
+
+document.addEventListener("click",()=>{
+  if(!soundEnabled){
+    Promise.all([drum.play(),crackle.play()]).then(()=>{
+      drum.pause();crackle.pause();
+      drum.currentTime=crackle.currentTime=0;
+      soundEnabled=true;
+    }).catch(()=>{});
+  }
+},{once:true});
+
+function updateCountdown(){
+  const diff=launchDate-Date.now();
+  if(diff<=0){ids.forEach(id=>document.getElementById(id).textContent="00");launch();return;}
+  document.getElementById("days").textContent=Math.floor(diff/86400000);
+  document.getElementById("hours").textContent=Math.floor(diff/3600000)%24;
+  document.getElementById("minutes").textContent=Math.floor(diff/60000)%60;
+  document.getElementById("seconds").textContent=Math.floor(diff/1000)%60;
+}
+setInterval(updateCountdown,1000);updateCountdown();
+document.getElementById("year").textContent=new Date().getFullYear();
+
+/* CONFETTI */
+const c=document.getElementById("confettiCanvas"),ctx=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;const conf=[];
+function confetti(){
+  for(let i=0;i<200;i++)conf.push({x:Math.random()*c.width,y:-Math.random()*c.height,r:4+Math.random()*6,d:4+Math.random()*8,color:`hsl(${Math.random()*360},100%,70%)`});
+  (function draw(){ctx.clearRect(0,0,c.width,c.height);conf.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();p.y+=p.d});requestAnimationFrame(draw)})();
+}
+
+/* SPARKS (Sankranthi colors) */
+const s=document.getElementById("sparkCanvas"),sctx=s.getContext("2d");
+s.width=innerWidth;s.height=innerHeight;const sparks=[];
+const colors=["#ffb703","#fb8500","#ffd166","#f77f00","#e63946"];
+
+function burst(x,y){
+  for(let i=0;i<80;i++)sparks.push({x,y,vx:(Math.random()-.5)*8,vy:(Math.random()-.5)*8,life:60,color:colors[Math.floor(Math.random()*colors.length)]});
+}
+(function sparkDraw(){
+  sctx.clearRect(0,0,s.width,s.height);
+  for(let i=sparks.length-1;i>=0;i--){
+    const sp=sparks[i];
+    sp.x+=sp.vx;sp.y+=sp.vy;sp.vy+=.05;sp.life--;
+    sctx.beginPath();sctx.arc(sp.x,sp.y,2,0,Math.PI*2);
+    sctx.fillStyle=sp.color;sctx.fill();
+    if(sp.life<=0)sparks.splice(i,1);
+  }
+  requestAnimationFrame(sparkDraw);
+})();
+
+function launch(){
+  if(launched)return;launched=true;
+  if(soundEnabled){drum.play();crackle.play()}
+  const msg=document.createElement("div");
+  msg.className="launch-live";msg.textContent="🚀 We Are Live!";
+  document.querySelector(".launch-container").appendChild(msg);
+
+  confetti();
+  burst(innerWidth*.3,innerHeight*.4);
+  burst(innerWidth*.7,innerHeight*.35);
+  burst(innerWidth*.5,innerHeight*.25);
+
+  setTimeout(()=>location.href=redirectURL,8000);
+}
+</script>
+
+</body>
+</html>
